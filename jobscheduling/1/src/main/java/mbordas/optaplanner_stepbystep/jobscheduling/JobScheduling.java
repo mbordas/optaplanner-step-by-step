@@ -23,7 +23,7 @@ import org.optaplanner.core.api.solver.SolverFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JobScheduling1 {
+public class JobScheduling {
 
 	public static void main(String[] args) {
 		// Build the Solver
@@ -32,10 +32,10 @@ public class JobScheduling1 {
 		Solver<Schedule> solver = solverFactory.buildSolver();
 
 		List<Task> tasks = new ArrayList<>();
-		tasks.add(new Task(1, 2, 5, 5));
-		tasks.add(new Task(2, 1, 4, 5));
+		tasks.add(new Task(1, 3, 5, 5));
+		tasks.add(new Task(2, 1, 3, 5));
 		tasks.add(new Task(3, 3, 6, 5));
-		tasks.add(new Task(4, 3, 10, 0));
+		tasks.add(new Task(4, 3, 10, 1));
 		Schedule unsolvedSchedule = new Schedule(tasks);
 		unsolvedSchedule.init();
 

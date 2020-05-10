@@ -8,8 +8,8 @@
 
     <!-- Score configuration -->
     <scoreDirectorFactory>
-        <easyScoreCalculatorClass>mbordas.optaplanner_stepbystep.jobscheduling.score.ScheduleEasyScoreCalculator</easyScoreCalculatorClass>
-        <!--        <scoreDrl>mbordas/optaplanner_stepbystep/jobscheduling/score/scheduleCalculatorRules.drl</scoreDrl>-->
+<!--        <easyScoreCalculatorClass>mbordas.optaplanner_stepbystep.jobscheduling.score.ScheduleEasyScoreCalculator</easyScoreCalculatorClass>-->
+                <scoreDrl>mbordas/optaplanner_stepbystep/jobscheduling/score/scheduleCalculatorRules.drl</scoreDrl>
     </scoreDirectorFactory>
 
     <!-- Optimization algorithms configuration -->

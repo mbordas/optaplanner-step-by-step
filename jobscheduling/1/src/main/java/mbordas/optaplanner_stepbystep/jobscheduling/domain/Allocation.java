@@ -58,13 +58,8 @@ public class Allocation implements Comparable<Allocation> {
 		return start;
 	}
 
-	public void setStart(Integer delay) {
-		this.start = delay;
-	}
-
-	@ValueRangeProvider(id = "startRange")
-	public CountableValueRange<Integer> getStartRange() {
-		return ValueRangeFactory.createIntValueRange(0, 9);
+	public void setStart(Integer start) {
+		this.start = start;
 	}
 
 	public int getPenalty() {

@@ -19,6 +19,10 @@ import org.optaplanner.core.api.domain.solution.PlanningEntityCollectionProperty
 import org.optaplanner.core.api.domain.solution.PlanningScore;
 import org.optaplanner.core.api.domain.solution.PlanningSolution;
 import org.optaplanner.core.api.domain.solution.drools.ProblemFactCollectionProperty;
+import org.optaplanner.core.api.domain.valuerange.CountableValueRange;
+import org.optaplanner.core.api.domain.valuerange.ValueRangeFactory;
+import org.optaplanner.core.api.domain.valuerange.ValueRangeProvider;
+import org.optaplanner.core.api.domain.variable.PlanningVariable;
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
 
 import java.util.ArrayList;
@@ -56,12 +60,18 @@ public class Schedule {
 	}
 
 	@ProblemFactCollectionProperty
+	@ValueRangeProvider(id = "taskRange")
 	public List<Task> getTaskList() {
 		return taskList;
 	}
 
 	public void setTaskList(List<Task> taskList) {
 		this.taskList = taskList;
+	}
+
+	@ValueRangeProvider(id = "startRange")
+	public CountableValueRange<Integer> getStartRange() {
+		return ValueRangeFactory.createIntValueRange(0, 9);
 	}
 
 	@PlanningScore
