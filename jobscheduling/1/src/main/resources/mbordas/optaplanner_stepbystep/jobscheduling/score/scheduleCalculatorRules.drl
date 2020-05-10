@@ -1,0 +1,39 @@
+package mbordas.optaplanner_stepbystep.jobscheduling.score;
+    dialect "java"
+
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
+
+import mbordas.optaplanner_stepbystep.jobscheduling.domain.Allocation;
+import mbordas.optaplanner_stepbystep.jobscheduling.domain.Schedule;
+import mbordas.optaplanner_stepbystep.jobscheduling.domain.Task;
+
+
+global HardSoftScoreHolder scoreHolder;
+
+// Hard constraints
+
+rule "duplicateTask"
+    when
+        Allocation($id : id, $task : task)
+        Allocation($id != id, task == $task)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+rule "simultaneousTasks"
+    when
+        $allocation : Allocation($id : id, $task : task)
+        Allocation($task != task, eval($allocation.getCollision(delay, delay + task.getCharge()) > 0))
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+// Soft constraints
+
+rule "delayPenality"
+    when
+        $task : Task($dueDelay : dueDelay, $charge : charge)
+        Allocation(task == $task, eval($task.getPenalty(start) > 0), $start : start);
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -$task.getPenalty($start));
+end
