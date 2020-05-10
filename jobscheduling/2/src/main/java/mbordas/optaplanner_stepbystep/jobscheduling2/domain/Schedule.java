@@ -74,7 +74,7 @@ public class Schedule {
 	public CountableValueRange<Integer> getStartRange() {
 		int max = 0;
 		for(Task task : getTaskList()) {
-			max += task.charge;
+			max += task.duration;
 		}
 		return ValueRangeFactory.createIntValueRange(0, max * 2);
 	}

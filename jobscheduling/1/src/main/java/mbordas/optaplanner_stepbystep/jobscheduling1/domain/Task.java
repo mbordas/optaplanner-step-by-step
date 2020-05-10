@@ -18,19 +18,19 @@ package mbordas.optaplanner_stepbystep.jobscheduling1.domain;
 public class Task {
 
 	int id;
-	int charge;
+	int duration;
 	int dueDelay;
 	int latePenalty;
 
-	public Task(int id, int charge, int dueDelay, int latePenalty) {
+	public Task(int id, int duration, int dueDelay, int latePenalty) {
 		this.id = id;
-		this.charge = charge;
+		this.duration = duration;
 		this.dueDelay = dueDelay;
 		this.latePenalty = latePenalty;
 	}
 
-	public int getCharge() {
-		return charge;
+	public int getDuration() {
+		return duration;
 	}
 
 	public int dueDelay() {
@@ -38,7 +38,7 @@ public class Task {
 	}
 
 	public int getPenalty(int start) {
-		return Math.max(0, start + charge - dueDelay) * latePenalty;
+		return Math.max(0, start + duration - dueDelay) * latePenalty;
 	}
 
 }

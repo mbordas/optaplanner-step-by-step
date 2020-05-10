@@ -23,7 +23,7 @@ end
 rule "simultaneousTasks"
     when
         $allocation : Allocation($id : id, $task : task)
-        Allocation($task != task, eval($allocation.getCollision(start, start + task.getCharge()) > 0))
+        Allocation($task != task, eval($allocation.getCollision(start, start + task.getDuration()) > 0))
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
@@ -40,7 +40,7 @@ end
 
 rule "delayPenality"
     when
-        $task : Task($dueDelay : dueDelay, $charge : charge)
+        $task : Task($dueDelay : dueDelay, $duration : duration)
         Allocation(task == $task, eval($task.getPenalty(start) > 0), $start : start);
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -$task.getPenalty($start));

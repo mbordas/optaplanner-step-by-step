@@ -64,14 +64,14 @@ public class Allocation implements Comparable<Allocation> {
 	}
 
 	public int getEnd() {
-		return getStart() + task.charge;
+		return getStart() + task.duration;
 	}
 
 	public int getCollision(int start, int end) {
 		if(end <= this.start || start >= getEnd()) {
 			return 0;
 		} else {
-			int collision = task.charge; // Maximum value
+			int collision = task.duration; // Maximum value
 			if(end < getEnd()) {
 				collision -= getEnd() - end;
 			}
@@ -84,7 +84,7 @@ public class Allocation implements Comparable<Allocation> {
 
 	@Override
 	public String toString() {
-		return String.format("alloc #%d Task #%d %dd [%d-%d[", id, task.id, task.charge, start, getEnd());
+		return String.format("alloc #%d Task #%d %dd [%d-%d[", id, task.id, task.duration, start, getEnd());
 	}
 
 	@Override

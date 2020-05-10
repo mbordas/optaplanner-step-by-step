@@ -21,7 +21,6 @@ import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -49,8 +48,8 @@ public class JobScheduling {
 		addNewTask(tasks, 3, 10, 1); // Lower priority
 
 		// Building tasks that depend on preliminary tasks
-		Task t3 = addNewTask(tasks, 3,12,2).addDependency(t1);
-		addNewTask(tasks, 2,15,1).addDependency(t3,t2);
+		Task t3 = addNewTask(tasks, 3,12,2).setDependencies(t1);
+		addNewTask(tasks, 2,15,1).setDependencies(t3,t2);
 
 		Schedule unsolvedSchedule = new Schedule(new ArrayList<>(tasks.values()));
 		unsolvedSchedule.init();

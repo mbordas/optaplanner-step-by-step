@@ -23,15 +23,15 @@ public class Task {
 	private static int nextId = 0;
 
 	int id;
-	int charge;
+	int duration;
 	int dueDelay;
 	int latePenalty;
 
 	List<Task> dependencies = new ArrayList<>();
 
-	public Task(int charge, int dueDelay, int latePenalty) {
+	public Task(int duration, int dueDelay, int latePenalty) {
 		this.id = nextId++;
-		this.charge = charge;
+		this.duration = duration;
 		this.dueDelay = dueDelay;
 		this.latePenalty = latePenalty;
 	}
@@ -40,7 +40,7 @@ public class Task {
 		return id;
 	}
 
-	public Task addDependency(Task...tasks) {
+	public Task setDependencies(Task...tasks) {
 		for(Task task : tasks) {
 			dependencies.add(task);
 		}
@@ -55,8 +55,8 @@ public class Task {
 		return dependencies;
 	}
 
-	public int getCharge() {
-		return charge;
+	public int getDuration() {
+		return duration;
 	}
 
 	public int dueDelay() {
@@ -64,7 +64,7 @@ public class Task {
 	}
 
 	public int getPenalty(int start) {
-		return Math.max(0, start + charge - dueDelay) * latePenalty;
+		return Math.max(0, start + duration - dueDelay) * latePenalty;
 	}
 
 }
