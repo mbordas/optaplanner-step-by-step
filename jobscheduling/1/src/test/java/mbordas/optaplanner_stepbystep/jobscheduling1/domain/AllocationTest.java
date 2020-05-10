@@ -13,40 +13,24 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package mbordas.optaplanner_stepbystep.jobscheduling.score;
+package mbordas.optaplanner_stepbystep.jobscheduling1.domain;
 
-import mbordas.optaplanner_stepbystep.jobscheduling.domain.Allocation;
-import mbordas.optaplanner_stepbystep.jobscheduling.domain.Schedule;
-import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
-import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator;
+import org.junit.Test;
 
-public class ScheduleEasyScoreCalculator implements EasyScoreCalculator<Schedule> {
+import static org.junit.Assert.assertEquals;
 
-	@Override
-	public HardSoftScore calculateScore(Schedule schedule) {
-		int hardScore = 0;
-		int softScore = 0;
+public class AllocationTest {
 
-		for(Allocation allocation : schedule.getAllocationList()) {
-			// penalty for being late is soft score
-			softScore -= allocation.getPenalty();
+	@Test
+	public void collisions() {
+		Task t1 = new Task(1, 10, 50, 1);
+		Task t2 = new Task(2, 20, 50, 1);
+		Task t3 = new Task(3, 30, 50, 1);
 
-			// simultaneous tasks makes hard score
-			int start = allocation.getStart();
-			int end = allocation.getEnd();
-			for(Allocation otherAllocation : schedule.getAllocationList()) {
-				if(allocation == otherAllocation) {
-					continue;
-				}
-				if(otherAllocation.getTask() == allocation.getTask()) {
-					hardScore -= 100;
-				} else {
-					int collision = otherAllocation.getCollision(start, end);
-					hardScore -= collision;
-				}
-			}
-		}
+		Allocation a1 = new Allocation(t1, 10);
 
-		return HardSoftScore.of(hardScore, softScore);
+		assertEquals(0, a1.getCollision(0, 10));
+		assertEquals(0, a1.getCollision(20, 30));
+		assertEquals(10, a1.getCollision(10, 20));
 	}
 }

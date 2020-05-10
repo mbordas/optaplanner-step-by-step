@@ -13,36 +13,40 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package mbordas.optaplanner_stepbystep.jobscheduling;
+package mbordas.optaplanner_stepbystep.jobscheduling1.score;
 
-import mbordas.optaplanner_stepbystep.jobscheduling.domain.Schedule;
-import mbordas.optaplanner_stepbystep.jobscheduling.domain.Task;
-import org.optaplanner.core.api.solver.Solver;
-import org.optaplanner.core.api.solver.SolverFactory;
+import mbordas.optaplanner_stepbystep.jobscheduling1.domain.Allocation;
+import mbordas.optaplanner_stepbystep.jobscheduling1.domain.Schedule;
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScore;
+import org.optaplanner.core.impl.score.director.easy.EasyScoreCalculator;
 
-import java.util.ArrayList;
-import java.util.List;
+public class ScheduleEasyScoreCalculator implements EasyScoreCalculator<Schedule> {
 
-public class JobScheduling {
+	@Override
+	public HardSoftScore calculateScore(Schedule schedule) {
+		int hardScore = 0;
+		int softScore = 0;
 
-	public static void main(String[] args) {
-		// Build the Solver
-		SolverFactory<Schedule> solverFactory = SolverFactory.createFromXmlResource(
-				"mbordas/optaplanner_stepbystep/jobscheduling/score/scheduleCalculatorConfig.xml");
-		Solver<Schedule> solver = solverFactory.buildSolver();
+		for(Allocation allocation : schedule.getAllocationList()) {
+			// penalty for being late is soft score
+			softScore -= allocation.getPenalty();
 
-		List<Task> tasks = new ArrayList<>();
-		tasks.add(new Task(1, 3, 5, 5));
-		tasks.add(new Task(2, 1, 3, 5));
-		tasks.add(new Task(3, 3, 6, 5));
-		tasks.add(new Task(4, 3, 10, 1));
-		Schedule unsolvedSchedule = new Schedule(tasks);
-		unsolvedSchedule.init();
+			// simultaneous tasks makes hard score
+			int start = allocation.getStart();
+			int end = allocation.getEnd();
+			for(Allocation otherAllocation : schedule.getAllocationList()) {
+				if(allocation == otherAllocation) {
+					continue;
+				}
+				if(otherAllocation.getTask() == allocation.getTask()) {
+					hardScore -= 100;
+				} else {
+					int collision = otherAllocation.getCollision(start, end);
+					hardScore -= collision;
+				}
+			}
+		}
 
-		// Solve the problem
-		Schedule solvedSchedule = solver.solve(unsolvedSchedule);
-
-		// Display the result
-		System.out.println("\nSolution:\n" + solvedSchedule.toString());
+		return HardSoftScore.of(hardScore, softScore);
 	}
 }

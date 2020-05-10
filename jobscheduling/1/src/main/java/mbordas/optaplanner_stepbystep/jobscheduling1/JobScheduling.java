@@ -13,32 +13,36 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package mbordas.optaplanner_stepbystep.jobscheduling.domain;
+package mbordas.optaplanner_stepbystep.jobscheduling1;
 
-public class Task {
+import mbordas.optaplanner_stepbystep.jobscheduling1.domain.Schedule;
+import mbordas.optaplanner_stepbystep.jobscheduling1.domain.Task;
+import org.optaplanner.core.api.solver.Solver;
+import org.optaplanner.core.api.solver.SolverFactory;
 
-	int id;
-	int charge;
-	int dueDelay;
-	int latePenalty;
+import java.util.ArrayList;
+import java.util.List;
 
-	public Task(int id, int charge, int dueDelay, int latePenalty) {
-		this.id = id;
-		this.charge = charge;
-		this.dueDelay = dueDelay;
-		this.latePenalty = latePenalty;
+public class JobScheduling {
+
+	public static void main(String[] args) {
+		// Build the Solver
+		SolverFactory<Schedule> solverFactory = SolverFactory.createFromXmlResource(
+				"mbordas/optaplanner_stepbystep/jobscheduling1/score/scheduleCalculatorConfig.xml");
+		Solver<Schedule> solver = solverFactory.buildSolver();
+
+		List<Task> tasks = new ArrayList<>();
+		tasks.add(new Task(1, 3, 5, 5));
+		tasks.add(new Task(2, 1, 3, 5));
+		tasks.add(new Task(3, 3, 6, 5));
+		tasks.add(new Task(4, 3, 10, 1));
+		Schedule unsolvedSchedule = new Schedule(tasks);
+		unsolvedSchedule.init();
+
+		// Solve the problem
+		Schedule solvedSchedule = solver.solve(unsolvedSchedule);
+
+		// Display the result
+		System.out.println("\nSolution:\n" + solvedSchedule.toString());
 	}
-
-	public int getCharge() {
-		return charge;
-	}
-
-	public int dueDelay() {
-		return dueDelay;
-	}
-
-	public int getPenalty(int start) {
-		return Math.max(0, start + charge - dueDelay) * latePenalty;
-	}
-
 }

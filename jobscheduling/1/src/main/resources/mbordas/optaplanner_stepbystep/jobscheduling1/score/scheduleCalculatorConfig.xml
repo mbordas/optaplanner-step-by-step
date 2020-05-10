@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<solver>
+    <!-- Domain model configuration -->
+    <!--<scanAnnotatedClasses/> -->
+
+    <solutionClass>mbordas.optaplanner_stepbystep.jobscheduling1.domain.Schedule</solutionClass>
+    <entityClass>mbordas.optaplanner_stepbystep.jobscheduling1.domain.Allocation</entityClass>
+
+    <!-- Score configuration -->
+    <scoreDirectorFactory>
+<!--        <easyScoreCalculatorClass>mbordas.optaplanner_stepbystep.jobscheduling1.score.ScheduleEasyScoreCalculator</easyScoreCalculatorClass>-->
+                <scoreDrl>mbordas/optaplanner_stepbystep/jobscheduling1/score/scheduleCalculatorRules.drl</scoreDrl>
+    </scoreDirectorFactory>
+
+    <!-- Optimization algorithms configuration -->
+    <termination>
+        <secondsSpentLimit>5</secondsSpentLimit>
+    </termination>
+</solver>
+

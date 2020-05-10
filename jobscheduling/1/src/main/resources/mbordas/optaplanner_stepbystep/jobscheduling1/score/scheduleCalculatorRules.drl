@@ -1,11 +1,11 @@
-package mbordas.optaplanner_stepbystep.jobscheduling.score;
+package mbordas.optaplanner_stepbystep.jobscheduling1.score;
     dialect "java"
 
 import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
 
-import mbordas.optaplanner_stepbystep.jobscheduling.domain.Allocation;
-import mbordas.optaplanner_stepbystep.jobscheduling.domain.Schedule;
-import mbordas.optaplanner_stepbystep.jobscheduling.domain.Task;
+import mbordas.optaplanner_stepbystep.jobscheduling1.domain.Allocation;
+import mbordas.optaplanner_stepbystep.jobscheduling1.domain.Schedule;
+import mbordas.optaplanner_stepbystep.jobscheduling1.domain.Task;
 
 
 global HardSoftScoreHolder scoreHolder;

@@ -13,24 +13,32 @@ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON A
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package mbordas.optaplanner_stepbystep.jobscheduling.domain;
+package mbordas.optaplanner_stepbystep.jobscheduling1.domain;
 
-import org.junit.Test;
+public class Task {
 
-import static org.junit.Assert.assertEquals;
+	int id;
+	int charge;
+	int dueDelay;
+	int latePenalty;
 
-public class AllocationTest {
-
-	@Test
-	public void collisions() {
-		Task t1 = new Task(1, 10, 50, 1);
-		Task t2 = new Task(2, 20, 50, 1);
-		Task t3 = new Task(3, 30, 50, 1);
-
-		Allocation a1 = new Allocation(t1, 10);
-
-		assertEquals(0, a1.getCollision(0, 10));
-		assertEquals(0, a1.getCollision(20, 30));
-		assertEquals(10, a1.getCollision(10, 20));
+	public Task(int id, int charge, int dueDelay, int latePenalty) {
+		this.id = id;
+		this.charge = charge;
+		this.dueDelay = dueDelay;
+		this.latePenalty = latePenalty;
 	}
+
+	public int getCharge() {
+		return charge;
+	}
+
+	public int dueDelay() {
+		return dueDelay;
+	}
+
+	public int getPenalty(int start) {
+		return Math.max(0, start + charge - dueDelay) * latePenalty;
+	}
+
 }
