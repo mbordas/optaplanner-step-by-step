@@ -1,0 +1,67 @@
+package mbordas.optaplanner_stepbystep.jobscheduling3.score;
+    dialect "java"
+
+import org.optaplanner.core.api.score.buildin.hardsoft.HardSoftScoreHolder;
+
+import mbordas.optaplanner_stepbystep.jobscheduling3.domain.Allocation;
+import mbordas.optaplanner_stepbystep.jobscheduling3.domain.Schedule;
+import mbordas.optaplanner_stepbystep.jobscheduling3.domain.Task;
+
+
+global HardSoftScoreHolder scoreHolder;
+
+// Hard constraints
+
+rule "duplicateTask"
+    when
+        Allocation($id : id, $task : task)
+        Allocation($id != id, task == $task)
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+rule "simultaneousTasks"
+    when
+        $allocation : Allocation($id : id, $task : task, $worker : worker)
+        $allocation2 : Allocation($task != task, $worker == worker,
+            eval($allocation.getCollision(start, $allocation2.getEnd()) > 0))
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+rule "taskDependencies"
+    when
+        Allocation($id : id, $task : task, $dependencyEnd : getEnd())
+        Allocation(eval(task.dependsOn($task)), eval($dependencyEnd > start))
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+rule "capabilities"
+    when
+        Allocation($task : task, $worker : worker)
+        eval(!$task.hasRequiredCapabilities($worker))
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+// Soft constraints
+
+rule "delayPenality"
+    when
+        $task : Task($dueDelay : dueDelay)
+        $allocation : Allocation(task == $task, eval($allocation.getPenalty() > 0), $start : start);
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -$allocation.getPenalty());
+end
+
+rule "globalMakespan"
+    when
+        accumulate(
+            Allocation($end : getEnd());
+            $latestEnd : max($end)
+        )
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -$latestEnd);
+end
+
