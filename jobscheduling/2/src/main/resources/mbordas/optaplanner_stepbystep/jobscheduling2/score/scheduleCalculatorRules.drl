@@ -22,8 +22,9 @@ end
 
 rule "simultaneousTasks"
     when
-        $allocation : Allocation($id : id, $task : task)
-        Allocation($task != task, eval($allocation.getCollision(start, start + task.getDuration()) > 0))
+        $allocation : Allocation($id : id, $task : task, $worker : worker)
+        Allocation($task != task, $worker == worker,
+            eval($allocation.getCollision(start, start + task.getDuration()) > 0))
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
@@ -32,6 +33,14 @@ rule "taskDependencies"
     when
         Allocation($id : id, $task : task, $dependencyEnd : getEnd())
         Allocation(eval(task.dependsOn($task)), eval($dependencyEnd > start))
+    then
+        scoreHolder.addHardConstraintMatch(kcontext, -1);
+end
+
+rule "capabilities"
+    when
+        Allocation($task : task, $worker : worker)
+        eval(!$task.hasRequiredCapabilities($worker))
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
@@ -45,3 +54,14 @@ rule "delayPenality"
     then
         scoreHolder.addSoftConstraintMatch(kcontext, -$task.getPenalty($start));
 end
+
+rule "globalMakespan"
+    when
+        accumulate(
+            Allocation($end : getEnd());
+            $latestEnd : max($end)
+        )
+    then
+        scoreHolder.addSoftConstraintMatch(kcontext, -$latestEnd);
+end
+

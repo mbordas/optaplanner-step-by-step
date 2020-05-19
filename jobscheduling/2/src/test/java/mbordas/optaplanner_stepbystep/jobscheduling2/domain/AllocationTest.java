@@ -27,7 +27,7 @@ public class AllocationTest {
 		Task t2 = new Task( 20, 50, 1);
 		Task t3 = new Task( 30, 50, 1);
 
-		Allocation a1 = new Allocation(t1, 10);
+		Allocation a1 = new Allocation(t1, 10, null);
 
 		assertEquals(0, a1.getCollision(0, 10));
 		assertEquals(0, a1.getCollision(20, 30));

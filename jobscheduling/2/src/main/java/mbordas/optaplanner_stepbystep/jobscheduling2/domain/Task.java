@@ -20,6 +20,9 @@ import java.util.List;
 
 public class Task {
 
+	public static final String CAPABILITY_1 = "C1";
+	public static final String CAPABILITY_2 = "C2";
+
 	private static int nextId = 0;
 
 	int id;
@@ -28,12 +31,16 @@ public class Task {
 	int latePenalty;
 
 	List<Task> dependencies = new ArrayList<>();
+	List<String> requiredCapabilities = new ArrayList<>();
 
-	public Task(int duration, int dueDelay, int latePenalty) {
+	public Task(int duration, int dueDelay, int latePenalty, String...requiredCapabilities) {
 		this.id = nextId++;
 		this.duration = duration;
 		this.dueDelay = dueDelay;
 		this.latePenalty = latePenalty;
+		for(String capability : requiredCapabilities) {
+			this.requiredCapabilities.add(capability);
+		}
 	}
 
 	public int getId() {
@@ -65,6 +72,32 @@ public class Task {
 
 	public int getPenalty(int start) {
 		return Math.max(0, start + duration - dueDelay) * latePenalty;
+	}
+
+	public boolean hasRequiredCapabilities(Worker worker) {
+		for(String capability : requiredCapabilities) {
+			if(!worker.hasCapability(capability)) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		String result = String.format("#%d %dd !%d", id, duration, dueDelay);
+
+		result += " cap:";
+		for(String requiredCapability : requiredCapabilities) {
+			result += requiredCapability + ",";
+		}
+
+		result += " dep:";
+		for(Task task : dependencies) {
+			result += "#" + task.id + ",";
+		}
+
+		return result;
 	}
 
 }

@@ -28,26 +28,32 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 @PlanningSolution
 public class Schedule {
 
 	private List<Task> taskList = new ArrayList<>();
 	private List<Allocation> allocationList = new ArrayList<>();
+	private List<Worker> workerList = new ArrayList<>();
 
 	private HardSoftScore score;
 
 	public Schedule() {
 	}
 
-	public Schedule(List<Task> taskList) {
+	public Schedule(List<Task> taskList, List<Worker> workers) {
 		this.taskList = taskList;
+		this.workerList = workers;
 	}
 
 	public void init() {
 		allocationList.clear();
+		Worker firstWorker = workerList.get(0);
 		for(Task task : taskList) {
-			allocationList.add(new Allocation(task, 0));
+			allocationList.add(new Allocation(task, 0, firstWorker));
 		}
 	}
 
@@ -70,6 +76,12 @@ public class Schedule {
 		this.taskList = taskList;
 	}
 
+	@ProblemFactCollectionProperty
+	@ValueRangeProvider(id = "workerRange")
+	public List<Worker> getWorkerList(){
+		return workerList;
+	}
+
 	@ValueRangeProvider(id = "startRange")
 	public CountableValueRange<Integer> getStartRange() {
 		int max = 0;
@@ -90,33 +102,81 @@ public class Schedule {
 
 	@Override
 	public String toString() {
-		StringBuilder result = new StringBuilder(String.format("%d tasks:\n", taskList.size()));
+		StringBuilder result = new StringBuilder();
 
-		final Map<Task, Allocation> allocationMap = new HashMap<>();
-		for(Allocation allocation : allocationList) {
-			allocationMap.put(allocation.getTask(), allocation);
+		// Printing input summary
+		result.append("Input\n");
+		for(Task task : this.getTaskList()) {
+			result.append(task.toString() + "\n");
 		}
 
+		int firstDay = Integer.MAX_VALUE;
+		int lastDay = Integer.MIN_VALUE;
 		for(Allocation allocation : allocationList) {
-			result.append(allocation.toString());
+			firstDay = Math.min(firstDay, allocation.getStart());
+			lastDay = Math.max(lastDay, allocation.getEnd());
+		}
+		final int days = lastDay - firstDay;
 
-			int penalty = allocation.getPenalty();
-			if(penalty > 0) {
-				result.append(" penalty=" + penalty);
+		// Grouping allocations by worker
+		Map<Worker, Task[]> tasksByWorker = new TreeMap<>();
+		for(Allocation allocation : allocationList) {
+			Worker worker = allocation.getWorker();
+			Task[] workerTasks = tasksByWorker.get(worker);
+			if(workerTasks == null) {
+				workerTasks = new Task[days];
+				tasksByWorker.put(worker, workerTasks);
 			}
 
-			if(!allocation.getTask().getDependencies().isEmpty()) {
-				result.append(" dependencies:");
-				for(Task dependencyTask : allocation.getTask().getDependencies()) {
-					Allocation dependencyAllocation = allocationMap.get(dependencyTask);
-					result.append(" #" + dependencyTask.getId()
-							+ ((dependencyAllocation.getEnd() > allocation.getStart())?"!":"")
-					);
+			for(int day = allocation.getStart(); day < allocation.getEnd(); day++) {
+				workerTasks[day - firstDay] = allocation.getTask();
+			}
+		}
+
+		result.append(String.format("\nBest solution takes %d days\n", days));
+		for(Map.Entry<Worker, Task[]> entry : tasksByWorker.entrySet()) {
+			Worker worker = entry.getKey();
+			Task[] tasks = entry.getValue();
+			StringBuilder line = new StringBuilder(worker.getName() + "\t");
+			for(Task task : tasks) {
+				if(task == null) {
+					line.append("   ");
+				} else {
+					line.append(String.format(" %d ", task.id));
 				}
 			}
-
-			result.append("\n");
+			result.append(line.toString() + "\n");
 		}
+
 		return result.toString();
+
+//		StringBuilder result = new StringBuilder(String.format("%d tasks:\n", taskList.size()));
+//
+//		final Map<Task, Allocation> allocationMap = new HashMap<>();
+//		for(Allocation allocation : allocationList) {
+//			allocationMap.put(allocation.getTask(), allocation);
+//		}
+//
+//		for(Allocation allocation : allocationList) {
+//			result.append(allocation.toString());
+//
+//			int penalty = allocation.getPenalty();
+//			if(penalty > 0) {
+//				result.append(" penalty=" + penalty);
+//			}
+//
+//			if(!allocation.getTask().getDependencies().isEmpty()) {
+//				result.append(" dependencies:");
+//				for(Task dependencyTask : allocation.getTask().getDependencies()) {
+//					Allocation dependencyAllocation = allocationMap.get(dependencyTask);
+//					result.append(" #" + dependencyTask.getId()
+//							+ ((dependencyAllocation.getEnd() > allocation.getStart())?"!":"")
+//					);
+//				}
+//			}
+//
+//			result.append("\n");
+//		}
+//		return result.toString();
 	}
 }

@@ -13,7 +13,7 @@
 
     <!-- Optimization algorithms configuration -->
     <termination>
-        <secondsSpentLimit>5</secondsSpentLimit>
+        <secondsSpentLimit>10</secondsSpentLimit>
     </termination>
 </solver>
 

@@ -26,15 +26,17 @@ public class Allocation implements Comparable<Allocation> {
 	private int id;
 	private Task task;
 	private Integer start;
+	private Worker worker;
 
 	public Allocation() {
 		id = nextId++;
 	}
 
-	public Allocation(Task task, int start) {
+	public Allocation(Task task, int start, Worker worker) {
 		id = nextId++;
 		this.task = task;
 		this.start = start;
+		this.worker = worker;
 	}
 
 	public int getId() {
@@ -57,6 +59,15 @@ public class Allocation implements Comparable<Allocation> {
 
 	public void setStart(Integer start) {
 		this.start = start;
+	}
+
+	@PlanningVariable(valueRangeProviderRefs = { "workerRange" })
+	public Worker getWorker() {
+		return worker;
+	}
+
+	public void setWorker(Worker worker) {
+		this.worker = worker;
 	}
 
 	public int getPenalty() {
@@ -84,7 +95,7 @@ public class Allocation implements Comparable<Allocation> {
 
 	@Override
 	public String toString() {
-		return String.format("alloc #%d Task #%d %dd [%d-%d[", id, task.id, task.duration, start, getEnd());
+		return String.format("alloc #%d Task #%d %dd %s [%d-%d[", id, task.id, task.duration, worker.getName(), start, getEnd());
 	}
 
 	@Override
