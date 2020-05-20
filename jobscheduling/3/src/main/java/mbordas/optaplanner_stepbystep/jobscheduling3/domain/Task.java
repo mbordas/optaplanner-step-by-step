@@ -20,8 +20,8 @@ import java.util.List;
 
 public class Task {
 
-	public static final String CAPABILITY_1 = "C1";
-	public static final String CAPABILITY_2 = "C2";
+	public static final String SKILL_1 = "S1";
+	public static final String SKILL_2 = "S2";
 
 	private static int nextId = 0;
 
@@ -31,15 +31,15 @@ public class Task {
 	int latePenalty;
 
 	List<Task> dependencies = new ArrayList<>();
-	List<String> requiredCapabilities = new ArrayList<>();
+	List<String> requiredSkills = new ArrayList<>();
 
-	public Task(int duration, int dueDelay, int latePenalty, String...requiredCapabilities) {
+	public Task(int duration, int dueDelay, int latePenalty, String... requiredSkills) {
 		this.id = nextId++;
 		this.duration = duration;
 		this.dueDelay = dueDelay;
 		this.latePenalty = latePenalty;
-		for(String capability : requiredCapabilities) {
-			this.requiredCapabilities.add(capability);
+		for(String skill : requiredSkills) {
+			this.requiredSkills.add(skill);
 		}
 	}
 
@@ -70,9 +70,9 @@ public class Task {
 		return Math.max(0, end - dueDelay) * latePenalty;
 	}
 
-	public boolean hasRequiredCapabilities(Worker worker) {
-		for(String capability : requiredCapabilities) {
-			if(!worker.hasCapability(capability)) {
+	public boolean hasRequiredSkills(Worker worker) {
+		for(String skill : requiredSkills) {
+			if(!worker.hasSkill(skill)) {
 				return false;
 			}
 		}
@@ -84,8 +84,8 @@ public class Task {
 		String result = String.format("#%d %dd !%d", id, duration, dueDelay);
 
 		result += " cap:";
-		for(String requiredCapability : requiredCapabilities) {
-			result += requiredCapability + ",";
+		for(String requiredSkill : requiredSkills) {
+			result += requiredSkill + ",";
 		}
 
 		result += " dep:";

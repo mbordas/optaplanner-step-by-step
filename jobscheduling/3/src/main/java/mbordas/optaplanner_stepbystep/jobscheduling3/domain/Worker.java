@@ -13,13 +13,13 @@ public class Worker implements Comparable<Worker> {
 
 	private String name;
 
-	private List<String> capabilities = new ArrayList<>();
+	private List<String> skills = new ArrayList<>();
 	private List<Integer> daysOff = new ArrayList<>();
 
-	public Worker(String name, String...capabilities) {
+	public Worker(String name, String...skills) {
 		this.name = name;
-		for(String capability : capabilities) {
-			this.capabilities.add(capability);
+		for(String skill : skills) {
+			this.skills.add(skill);
 		}
 	}
 
@@ -33,8 +33,8 @@ public class Worker implements Comparable<Worker> {
 		daysOff.clear();
 	}
 
-	public boolean hasCapability(String capability) {
-		return capabilities.contains(capability);
+	public boolean hasSkill(String skill) {
+		return skills.contains(skill);
 	}
 
 	public String getName() {
