@@ -37,10 +37,10 @@ rule "taskDependencies"
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
 
-rule "capabilities"
+rule "skills"
     when
         Allocation($task : task, $worker : worker)
-        eval(!$task.hasRequiredCapabilities($worker))
+        eval(!$task.hasRequiredSkills($worker))
     then
         scoreHolder.addHardConstraintMatch(kcontext, -1);
 end
