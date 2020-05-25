@@ -66,8 +66,8 @@ public class JobScheduling {
 		worker3.addDaysOff(2,3);
 
 		Schedule unsolvedSchedule = new Schedule(new ArrayList<>(tasks.values()), workers);
-		unsolvedSchedule.init();
 		unsolvedSchedule.forceAllocation(t1, 0, worker1);
+		unsolvedSchedule.init();
 
 		// Solve the problem
 		Schedule solvedSchedule = solver.solve(unsolvedSchedule);

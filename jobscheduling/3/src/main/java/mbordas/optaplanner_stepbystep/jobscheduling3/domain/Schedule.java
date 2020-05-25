@@ -51,8 +51,9 @@ public class Schedule {
 	public void init() {
 		allocationList.clear();
 		Worker firstWorker = workerList.get(0);
-		for(Task task : taskList) {
-			allocationList.add(new Allocation(task, 0, firstWorker));
+		Task firstTask = taskList.get(0);
+		for(int i = 0; i < taskList.size() - lockedAllocationList.size(); i++) {
+			allocationList.add(new Allocation(firstTask, 0, firstWorker));
 		}
 	}
 
